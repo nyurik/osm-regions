@@ -33,7 +33,7 @@
     "build:umd": "rimraf dist/umd && cross-env BABEL_ENV=es rollup -c & cross-env BABEL_ENV=es NODE_ENV=production rollup -c"
   },
   "keywords": [],
-  "author": "Yuri Astrakhan &lt;YuriAstrakhan@gmail.com&gt; (undefined)",
+  "author": "Yuri Astrakhan (YuriAstrakhan@gmail.com)",
   "license": "MIT",
   "repository": "nyurik/osm-regions",
   "devDependencies": {
