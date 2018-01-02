@@ -1,4 +1,4 @@
-const postgres = require(`wd-type-parser`);
+const postgres = require(`pg-promise`);
 
 const SQL_QUERY = `SELECT id,
  ST_AsGeoJSON(ST_Transform(way, 4326)) as data FROM 
