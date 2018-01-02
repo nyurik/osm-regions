@@ -1,4 +1,4 @@
-const postgres = require(`pg-promise`)();
+const postgres = require(`pg-promise`);
 
 const SQL_QUERY = `SELECT id,
  ST_AsGeoJSON(ST_Transform(way, 4326)) as data FROM 
@@ -24,13 +24,17 @@ class PostgresService {
    * @param {Object} [opts.requester]
    */
   constructor(opts) {
-    this._requester = opts.requester || postgres({
-      host: opts.host,
-      port: opts.port,
-      database: opts.database,
-      user: opts.user,
-      password: opts.password
-    });
+    this._requester = opts.requester;
+    if (!this._requester) {
+      const pgp = postgres();
+      this._requester = pgp({
+        host: opts.host,
+        port: opts.port,
+        database: opts.database,
+        user: opts.user,
+        password: opts.password
+      });
+    }
   }
 
   /**
