@@ -59,7 +59,7 @@ class PostgresService {
       const propStr = JSON.stringify((properties && properties[row.id]) || {});
       return `{"type":"Feature","id":"${row.id}","properties":${propStr},"geometry":${row.data}}`;
     }).join(`,`);
-    return `{type:"FeatureCollection",features:[${featuresStr}]}`;
+    return `{"type":"FeatureCollection","features":[${featuresStr}]}`;
   }
 }
 
