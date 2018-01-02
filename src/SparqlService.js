@@ -1,7 +1,7 @@
-import preq from 'preq';
-import parseWikidataValue from 'wd-type-parser';
+const preq = require(`preq`);
+const parseWikidataValue = require(`wd-type-parser`);
 
-export class SparqlService {
+class SparqlService {
 
   constructor(opts) {
     if (!opts.url) throw new Error(`SparqlService url is not set`);
@@ -69,3 +69,5 @@ export class SparqlService {
     return result;
   }
 }
+
+module.exports = {SparqlService};

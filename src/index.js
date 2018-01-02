@@ -1,2 +1,5 @@
-export * from './SparqlQuery';
-export * from './PostgresService';
+module.exports = {
+  ...require(`./SparqlService`),
+  ...require(`./PostgresService`)
+};
+

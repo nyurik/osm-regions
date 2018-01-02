@@ -1,4 +1,4 @@
-import postgres from 'wd-type-parser';
+const postgres = require(`wd-type-parser`);
 
 const SQL_QUERY = `SELECT id,
  ST_AsGeoJSON(ST_Transform(way, 4326)) as data FROM 
@@ -12,7 +12,7 @@ const SQL_QUERY = `SELECT id,
   GROUP BY id
 ) tbl2`;
 
-export class PostgresService {
+class PostgresService {
 
   /**
    * @param {Object} opts
@@ -58,3 +58,5 @@ export class PostgresService {
     return `{type:"FeatureCollection",features:[${featuresStr}]}`;
   }
 }
+
+module.exports = {PostgresService};

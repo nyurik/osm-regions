@@ -1,4 +1,4 @@
-import {PostgresService} from '../src/index';
+const {PostgresService} = require(`../src/index`);
 
 describe(`PostgresService`, () => {
 
