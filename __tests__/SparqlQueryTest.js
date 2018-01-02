@@ -2,12 +2,12 @@ import {SparqlService} from '../src/index';
 
 function test(serverResponse, expectedResult, opts) {
   return async () => {
-    const sq = new SparqlService(//Object.assign(
+    const sq = new SparqlService(Object.assign(
       {
         url: `https://example.com/rdfserver`,
         userAgent: `tester`,
         requester: async () => serverResponse,
-      }, opts);
+      }, opts));
 
     expect(await sq.query(`SELECT STATEMENT`, `id`)).toEqual(expectedResult);
   };
@@ -35,6 +35,25 @@ describe(`SparqlService`, () => {
       }
     },
     {Q123: {label: `abc`}, Q456: {label: `xyz`}}
+  ));
+
+  it(`parses response without normalization`, test(
+    {
+      headers: {'content-type': `application/sparql-results+json`},
+      body: {
+        head: {vars: [`id`, `label`]},
+        results: {
+          bindings: [
+            {
+              id: {type: `uri`, value: `http://www.wikidata.org/entity/Q123`},
+              label: {'xml:lang': `en`, type: `literal`, value: `abc`}
+            }
+          ]
+        }
+      }
+    },
+    {Q123: {label: {'xml:lang': `en`, type: `literal`, value: `abc`}}},
+    {normalizeIdOnly: true}
   ));
 
 });

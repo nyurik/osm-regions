@@ -13,7 +13,7 @@ export class SparqlService {
       Accept: `application/sparql-results+json`,
     };
     this._requester = opts.requester || preq.get;
-    this._normalizeIdOnly = !!opts.normalizeIdOnly;
+    this._normalizeIdOnly = opts.normalizeIdOnly;
   }
 
   async query(query, idColumn) {
