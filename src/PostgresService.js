@@ -1,9 +1,13 @@
 const postgres = require(`pg-promise`);
 
+/**
+ * Force all geometries to be the same winding order (for some reason they are not in DB)
+ * Join them all in a single row.
+ */
 const SQL_QUERY = `SELECT id,
  ST_AsGeoJSON(ST_Transform(way, 4326)) as data FROM 
 (
-  SELECT id, ST_Multi(ST_Union(way)) AS way
+  SELECT id, ST_Multi(ST_Union(ST_ForceRHR(way))) AS way
   FROM (
     SELECT tags->'wikidata' AS id, (ST_Dump(way)).geom AS way
     FROM $1~
