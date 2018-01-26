@@ -4,12 +4,12 @@ describe(`PostgresService`, () => {
 
   it(`pass-through query`, async () => {
     const res = [{id: `Q1`, data: `abc`}];
-    const ps = new PostgresService({requester: {query: async () => res}});
+    const ps = new PostgresService({queries: {}, requester: {query: async () => res}});
     expect(await ps.query(`tbl`, [`Q123`])).toEqual(res);
   });
 
   it(`optimized query`, async () => {
-    const ps = new PostgresService({requester: {query: async () => `abc`}});
+    const ps = new PostgresService({queries: {}, requester: {query: async () => `abc`}});
     expect(await ps.query(`tbl`, [])).toEqual([]);
   });
 

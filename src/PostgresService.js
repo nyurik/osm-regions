@@ -1,33 +1,5 @@
 const postgres = require(`pg-promise`);
 
-/**
- * Force all geometries to be the same winding order (for some reason they are not in DB)
- * Join them all in a single row.
- */
-const SQL_QUERY_PREFIX = `SELECT id,
- ST_AsGeoJSON(ST_Transform(ST_ForceRHR(way), 4326)) as data FROM
-(
-  SELECT id, ST_Multi(ST_Union(`;
-
-const SQL_QUERY_SUFFIX = `)) AS way
-  FROM (
-    SELECT tags->'wikidata' AS id, (ST_Dump(way)).geom AS way
-    FROM $1~
-    WHERE tags ? 'wikidata' AND tags->'wikidata' IN ($2:csv)
-    ) tbl1
-  GROUP BY id
-) tbl2`;
-
-const SQL_QUERY = `${SQL_QUERY_PREFIX}way${SQL_QUERY_SUFFIX}`;
-
-const SQL_QUERY_NO_WATER = `${SQL_QUERY_PREFIX}
-COALESCE(ST_Difference(
-  tbl1.way,
-  (select ST_Union(water.way) from $3~ water where ST_Intersects(tbl1.way, water.way))
-), tbl1.way)
-${SQL_QUERY_SUFFIX}`;
-
-
 class PostgresService {
 
   /**
@@ -38,8 +10,13 @@ class PostgresService {
    * @param {string} opts.user
    * @param {string} opts.password
    * @param {Object} [opts.requester]
+   * @param {Object} [opts.queries]
+   * @param {string} opts.queries.regularQuery
+   * @param {string} opts.queries.noWaterQuery
    */
   constructor(opts) {
+    this._regularQuery = opts.queries.regularQuery;
+    this._noWaterQuery = opts.queries.noWaterQuery;
     this._requester = opts.requester;
     if (!this._requester) {
       const pgp = postgres();
@@ -63,10 +40,10 @@ class PostgresService {
   query(table, ids, opts) {
     if (ids.length === 0) return [];
 
-    let query = SQL_QUERY;
+    let query = this._regularQuery;
     const params = [table, ids];
     if (opts && opts.waterTable) {
-      query = SQL_QUERY_NO_WATER;
+      query = this._noWaterQuery;
       params.push(opts.waterTable);
     }
 
